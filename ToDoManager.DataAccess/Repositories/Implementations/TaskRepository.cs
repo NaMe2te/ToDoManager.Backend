@@ -16,9 +16,10 @@ public class TaskRepository : ITaskRepository
         using (var connection = new MySqlConnection(_connectionString))
         {
             await connection.OpenAsync(cancellationToken);
-            string deadline = model.Deadline is not null ? $"'{model.Deadline.Value.ToString("yyyy-MM-dd HH:mm:ss")}'" : "NULL";
-            var createQuery = $"insert into {connection.Database}.tasks(name, text, is_completed, deadline)"
-                              + $" values ('{model.Name}', '{model.Text}', {model.IsCompleted}, {deadline});";
+            var deadline = model.Deadline is not null ? $"'{model.Deadline.Value.ToString("yyyy-MM-dd HH:mm:ss")}'" : "NULL";
+            var groupId = model.GroupId is not null ? $"{model.GroupId}" : "NULL";
+            var createQuery = $"insert into {connection.Database}.tasks(name, text, is_completed, deadline, group_id)"
+                              + $" values ('{model.Name}', '{model.Text}', {model.IsCompleted}, {deadline}, {groupId});";
             using (var command = new MySqlCommand(createQuery, connection))
             {
                 await command.ExecuteNonQueryAsync(cancellationToken);
@@ -146,7 +147,7 @@ public class TaskRepository : ITaskRepository
         {
             await connection.OpenAsync(cancellationToken);
             List<Models.Task> tasks = new List<Models.Task>();
-            var getQuery = $"select * from tasks where group_id = {groupId}";
+            var getQuery = $"select * from {connection.Database}.tasks where group_id = {groupId}";
             using (var command = new MySqlCommand(getQuery, connection))
             {
                 using (var reader = command.ExecuteReader())

@@ -1,4 +1,5 @@
-﻿using ToDoManager.Application.Dto;
+﻿using System.Runtime.InteropServices;
+using ToDoManager.Application.Dto;
 using ToDoManager.Application.Mapping;
 using ToDoManager.DataAccess.Repositories;
 
@@ -13,12 +14,12 @@ public class TaskService : ITaskService
         _taskRepository = taskRepository;
     }
 
-    public async Task AddTask(string name, string text, DateTime? deadline, CancellationToken cancellationToken)
+    public async Task AddTask(string name, string text, CancellationToken cancellationToken, DateTime? deadline = null, int? groupId = null)
     {
-        var task = new DataAccess.Models.Task(default, name, text, deadline: deadline);
+        var task = new DataAccess.Models.Task(default, name, text, deadline, groupId);
         await _taskRepository.CreateAsync(task, cancellationToken);
     }
-
+    
     public async Task<TaskDto> RemoveTask(int taskId, CancellationToken cancellationToken)
     {
         var removedTask = await _taskRepository.GetModelAsync(taskId, cancellationToken);

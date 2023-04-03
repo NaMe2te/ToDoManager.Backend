@@ -9,6 +9,16 @@ var configuration = new ConfigurationBuilder()
 
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(bu =>
+    {
+        bu.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services
     .AddApplication()
     .AddDataAccess(configuration);
@@ -18,13 +28,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.MapControllers();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors();
+
+app.MapControllers();
 
 app.UseHttpsRedirection();
 

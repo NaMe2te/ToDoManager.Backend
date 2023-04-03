@@ -27,6 +27,12 @@ public class GroupService : IGroupService
         return group.AdDto();
     }
 
+    public async Task<IEnumerable<GroupDto>> GetAllGroups(CancellationToken cancellationToken)
+    {
+        IEnumerable<Group> groups = await _groupRepository.GetAllAsync(cancellationToken);
+        return groups.Select(group => group.AdDto());
+    }
+
     public async Task RemoveGroup(int id, CancellationToken cancellationToken)
     {
         await _groupRepository.DeleteAsync(id, cancellationToken);

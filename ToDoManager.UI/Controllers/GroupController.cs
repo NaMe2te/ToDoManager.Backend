@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ToDoManager.Application.Dto;
 using ToDoManager.Application.Services;
+using ToDoManager.UI.Models.Groups;
 
 namespace ToDoManager.UI.Controllers;
 
@@ -18,10 +19,10 @@ public class GroupController : Controller
     
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
     
-    [HttpPost("add-new-group")]
-    public async Task<ActionResult> AddNewGroup([FromQuery] string groupName)
+    [HttpPost("create-group")]
+    public async Task<ActionResult> AddNewGroup([FromBody] CreateGroupModel model)
     {
-        await _groupService.AddGroup(groupName, CancellationToken);
+        await _groupService.AddGroup(model.GroupName, CancellationToken);
         return Ok();
     }
 
@@ -30,6 +31,13 @@ public class GroupController : Controller
     {
         GroupDto groupDto = await _groupService.GetGroup(id, CancellationToken);
         return Ok(groupDto);
+    }
+    
+    [HttpGet("get-all-groups")]
+    public async Task<ActionResult<IEnumerable<GroupDto>>> GetAllGroups()
+    {
+        IEnumerable<GroupDto> groups = await _groupService.GetAllGroups(CancellationToken);
+        return Ok(groups);
     }
 
     [HttpPut("rename-group")]
