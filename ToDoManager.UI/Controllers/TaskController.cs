@@ -20,10 +20,7 @@ public class TaskController : Controller
     [HttpPost("create-task")]
     public async Task<ActionResult> CreateTask([FromBody] CreateTaskModel model)
     {
-        DateTime? dateTime = null;
-        if (model.Deadline is not null)
-            dateTime = DateTime.Parse(model.Deadline);
-        await _taskService.AddTask(model.Name, model.Text, CancellationToken, dateTime, model.GroupId);
+        await _taskService.AddTask(model.AccountId, model.Name, model.Text, CancellationToken, model.Deadline, model.GroupId);
         return Ok();
     } 
 }

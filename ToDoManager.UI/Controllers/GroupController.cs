@@ -22,7 +22,7 @@ public class GroupController : Controller
     [HttpPost("create-group")]
     public async Task<ActionResult> AddNewGroup([FromBody] CreateGroupModel model)
     {
-        await _groupService.AddGroup(model.GroupName, CancellationToken);
+        await _groupService.AddGroup(model.AccountId, model.GroupName, CancellationToken);
         return Ok();
     }
 

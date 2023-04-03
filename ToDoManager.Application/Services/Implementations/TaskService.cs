@@ -14,9 +14,10 @@ public class TaskService : ITaskService
         _taskRepository = taskRepository;
     }
 
-    public async Task AddTask(string name, string text, CancellationToken cancellationToken, DateTime? deadline = null, int? groupId = null)
+    public async Task AddTask(int accountId, string name, string text, CancellationToken cancellationToken, DateTime? deadline = null, int? groupId = null)
     {
-        var task = new DataAccess.Models.Task(default, name, text, deadline, groupId);
+        
+        var task = new DataAccess.Models.Task(default, name, text, accountId, deadline, groupId);
         await _taskRepository.CreateAsync(task, cancellationToken);
     }
     

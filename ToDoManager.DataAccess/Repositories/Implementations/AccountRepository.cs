@@ -1,4 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
+using ToDoManager.DataAccess.Exceptions.InvalidDataException;
+using ToDoManager.DataAccess.Exceptions.NotFound;
 using ToDoManager.DataAccess.Models;
 using Task = System.Threading.Tasks.Task;
 
@@ -21,9 +23,7 @@ public class AccountRepository : IAccountRepository
             var createQuery = $"insert into {connection.Database}.accounts(username, password)" +
                               $" values ({model.Username}, {model.Password});";
             await using (var command = new MySqlCommand(createQuery, connection))
-            {
                 await command.ExecuteNonQueryAsync(cancellationToken);
-            }
         }
     }
 
@@ -72,7 +72,7 @@ public class AccountRepository : IAccountRepository
                 }
             }
 
-            return account ?? throw new Exception();
+            return account ?? throw new EntityNotFoundException<Account>(id);
         }
     }
 
@@ -98,6 +98,44 @@ public class AccountRepository : IAccountRepository
             }
 
             return accounts;
+        }
+    }
+
+    public async Task<Account> Login(string username, string password, CancellationToken cancellationToken)
+    { 
+        await using (var connection = new MySqlConnection(_connectionString))
+        {
+            Account? account = null;
+            await connection.OpenAsync(cancellationToken);
+            var getQuery = $"select * from {connection.Database}.accounts where username = {username} and password = {password};";
+            await using (var command = new MySqlCommand(getQuery, connection))
+            {
+                await using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var accountId = reader.GetInt32(0);
+                        account = new Account(accountId, username, password);
+                    }
+                }
+            }
+
+            return account ?? throw new InvalidUsernameOrPasswordException();
+        }
+    }
+
+    public async Task<bool> IsUsernameContains(string username)
+    {
+        await using (var connection = new MySqlConnection(_connectionString))
+        {
+            await connection.OpenAsync();
+            var selectQuery = $"select count(*) from {connection.Database}.accounts"
+                              + $" where username = {username};";
+            await using (var command = new MySqlCommand(selectQuery, connection))
+            {
+                var count = (int) await command.ExecuteScalarAsync();
+                return count != 0;
+            }
         }
     }
 }
