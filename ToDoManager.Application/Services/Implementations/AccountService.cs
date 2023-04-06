@@ -1,5 +1,6 @@
 ﻿using ToDoManager.Application.Dto;
 using ToDoManager.Application.Exceptions.AlreadyExist;
+using ToDoManager.Application.Exceptions.InvalidDataException;
 using ToDoManager.Application.Mapping;
 using ToDoManager.DataAccess.Repositories;
 using ToDoManager.DataAccess.Models;
@@ -18,7 +19,7 @@ public class AccountService : IAccountService
 
     public async Task Register(string username, string password, CancellationToken cancellationToken)
     {
-        if (await _repository.IsUsernameContains(username))
+        if (await _repository.FindAccountByUsername(username, cancellationToken) is not null)
             throw new UsernameAlreadyExistException(username);
         var account = new Account(default, username, password);
         await _repository.CreateAsync(account, cancellationToken);
@@ -26,7 +27,10 @@ public class AccountService : IAccountService
 
     public async Task<AccountDto> Login(string username, string password, CancellationToken cancellationToken)
     {
-        Account account = await _repository.Login(username, password, cancellationToken);
+        Account? account = await _repository.FindAccountByUsername(username, cancellationToken);
+        if (account is null || account.Password != password)
+            throw new InvalidUsernameOrPasswordException();
+
         return account.AsDto();
     }
 }

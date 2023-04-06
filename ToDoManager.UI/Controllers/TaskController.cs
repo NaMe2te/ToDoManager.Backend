@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ToDoManager.Application.Services;
 using ToDoManager.UI.Models;
+using ToDoManager.UI.Models.Tasks;
 
 namespace ToDoManager.UI.Controllers;
 

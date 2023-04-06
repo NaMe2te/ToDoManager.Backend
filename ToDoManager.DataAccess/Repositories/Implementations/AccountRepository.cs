@@ -1,5 +1,4 @@
 ﻿using MySql.Data.MySqlClient;
-using ToDoManager.DataAccess.Exceptions.InvalidDataException;
 using ToDoManager.DataAccess.Exceptions.NotFound;
 using ToDoManager.DataAccess.Models;
 using Task = System.Threading.Tasks.Task;
@@ -21,7 +20,7 @@ public class AccountRepository : IAccountRepository
         {
             await connection.OpenAsync(cancellationToken);
             var createQuery = $"insert into {connection.Database}.accounts(username, password)" +
-                              $" values ({model.Username}, {model.Password});";
+                              $" values ('{model.Username}', '{model.Password}');";
             await using (var command = new MySqlCommand(createQuery, connection))
                 await command.ExecuteNonQueryAsync(cancellationToken);
         }
@@ -101,13 +100,13 @@ public class AccountRepository : IAccountRepository
         }
     }
 
-    public async Task<Account> Login(string username, string password, CancellationToken cancellationToken)
+    public async Task<Account?> FindAccountByUsername(string username, CancellationToken cancellationToken)
     { 
         await using (var connection = new MySqlConnection(_connectionString))
         {
             Account? account = null;
             await connection.OpenAsync(cancellationToken);
-            var getQuery = $"select * from {connection.Database}.accounts where username = {username} and password = {password};";
+            var getQuery = $"select * from {connection.Database}.accounts where username = '{username}';";
             await using (var command = new MySqlCommand(getQuery, connection))
             {
                 await using (var reader = command.ExecuteReader())
@@ -115,27 +114,13 @@ public class AccountRepository : IAccountRepository
                     while (reader.Read())
                     {
                         var accountId = reader.GetInt32(0);
+                        var password = reader.GetString(2);
                         account = new Account(accountId, username, password);
                     }
                 }
             }
 
-            return account ?? throw new InvalidUsernameOrPasswordException();
-        }
-    }
-
-    public async Task<bool> IsUsernameContains(string username)
-    {
-        await using (var connection = new MySqlConnection(_connectionString))
-        {
-            await connection.OpenAsync();
-            var selectQuery = $"select count(*) from {connection.Database}.accounts"
-                              + $" where username = {username};";
-            await using (var command = new MySqlCommand(selectQuery, connection))
-            {
-                var count = (int) await command.ExecuteScalarAsync();
-                return count != 0;
-            }
+            return account;
         }
     }
 }

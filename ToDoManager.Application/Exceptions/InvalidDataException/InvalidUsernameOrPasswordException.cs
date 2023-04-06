@@ -1,4 +1,4 @@
-﻿namespace ToDoManager.DataAccess.Exceptions.InvalidDataException;
+﻿namespace ToDoManager.Application.Exceptions.InvalidDataException;
 
 public class InvalidUsernameOrPasswordException : Exception
 {
