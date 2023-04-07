@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ToDoManager.Application.Dto;
 using ToDoManager.Application.Services;
-using ToDoManager.UI.Models;
 using ToDoManager.UI.Models.Tasks;
 
 namespace ToDoManager.UI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
+
 public class TaskController : Controller
 {
     private readonly ITaskService _taskService;
@@ -21,7 +25,14 @@ public class TaskController : Controller
     [HttpPost("create-task")]
     public async Task<ActionResult> CreateTask([FromBody] CreateTaskModel model)
     {
-        await _taskService.AddTask(model.AccountId, model.Name, model.Text, CancellationToken, model.Deadline, model.GroupId);
+        int accountId = Int32.Parse(HttpContext.User.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Sid).Value);
+        await _taskService.AddTask(accountId, model.Name, model.Text, CancellationToken, model.Deadline, model.GroupId);
         return Ok();
-    } 
+    }
+
+    [HttpGet("get-tasks-without-group")]
+    public async Task<ActionResult<IEnumerable<TaskDto>>> GetTasksWithoutGroup()
+    {
+        await _taskService.GetTasksWithoutGroupByAccount()
+    }
 }

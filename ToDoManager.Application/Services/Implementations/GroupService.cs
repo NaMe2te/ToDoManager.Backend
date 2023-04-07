@@ -23,23 +23,9 @@ public class GroupService : IGroupService
         await _groupRepository.CreateAsync(group, cancellationToken);
     }
 
-    public async Task<GroupDto> GetGroup(int id, CancellationToken cancellationToken)
+    public async Task<IEnumerable<GroupDto>> GetAllByAccount(int id, CancellationToken cancellationToken)
     {
-        Group group = await _groupRepository.GetModelAsync(id, cancellationToken);
-        var tasks = await _taskRepository.GetTasksByGroup(group.Id, cancellationToken);
-        group.AddTasks(tasks);
-        return group.AdDto();
-    }
-
-    public async Task<IEnumerable<GroupDto>> GetAllGroups(CancellationToken cancellationToken)
-    {
-        List<Group> groups = (await _groupRepository.GetAllAsync(cancellationToken)).ToList();
-        foreach (var group in groups)
-        {
-            var tasks = await _taskRepository.GetTasksByGroup(group.Id, cancellationToken);
-            group.AddTasks(tasks);
-        }
-        
+        IEnumerable<Group> groups = await _groupRepository.GetAllByAccount(id, cancellationToken);
         return groups.Select(group => group.AdDto());
     }
 

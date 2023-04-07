@@ -28,12 +28,12 @@ public class AccountController : Controller
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
 
     [HttpPost("register")]
-    public async Task<ActionResult> Register([FromBody] AccountModel accountModel)
+    public async Task<ActionResult<object>> Register([FromBody] AccountModel accountModel)
     {
         try
         {
             await _accountService.Register(accountModel.Username, accountModel.Password, CancellationToken);
-            return Ok();
+            return await Login(accountModel);
         }
         catch (UsernameAlreadyExistException e)
         {
@@ -43,7 +43,7 @@ public class AccountController : Controller
     
 
     [HttpPost("login")]
-    public async Task<ActionResult<AccountDto>> Login([FromBody] AccountModel accountModel)
+    public async Task<ActionResult<object>> Login([FromBody] AccountModel accountModel)
     {
         try
         {
@@ -60,7 +60,7 @@ public class AccountController : Controller
     private string GetToken(int accountId, string username)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration.GetSection("jwt").GetValue<string>("SecretKey"));
+        var key = Encoding.Unicode.GetBytes(_configuration.GetSection("jwt").GetValue<string>("SecretKey"));
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new Claim[]
@@ -68,7 +68,9 @@ public class AccountController : Controller
                 new (ClaimTypes.Sid, accountId.ToString()),
                 new (ClaimTypes.Name, username)
             }),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            Audience = _configuration.GetSection("jwt").GetValue<string>("Audience"),
+            Issuer = _configuration.GetSection("jwt").GetValue<string>("Issuer")
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ToDoManager.Application.Dto;
 using ToDoManager.Application.Services;
 using ToDoManager.UI.Models.Groups;
@@ -7,6 +9,7 @@ namespace ToDoManager.UI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 
 public class GroupController : Controller
 {
@@ -20,31 +23,18 @@ public class GroupController : Controller
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
     
     [HttpPost("create-group")]
-    public async Task<ActionResult> AddNewGroup([FromBody] CreateGroupModel model)
+    public async Task<ActionResult> CreateGroup([FromBody] CreateGroupModel model)
     {
-        await _groupService.AddGroup(model.AccountId, model.GroupName, CancellationToken);
+        int accountId = Int32.Parse(HttpContext.User.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Sid).Value);
+        await _groupService.AddGroup(accountId, model.GroupName, CancellationToken);
         return Ok();
     }
 
-    [HttpGet("get-group")]
-    public async Task<ActionResult<GroupDto>> GetGroup([FromQuery] int id)
-    {
-        GroupDto groupDto = await _groupService.GetGroup(id, CancellationToken);
-        return Ok(groupDto);
-    }
-    
     [HttpGet("get-all-groups")]
-    public async Task<ActionResult<IEnumerable<GroupDto>>> GetAllGroups()
+    public async Task<ActionResult<IEnumerable<GroupDto>>> GetAllGroupsByAccount()
     {
-        IEnumerable<GroupDto> groups = await _groupService.GetAllGroups(CancellationToken);
+        int accountId = Int32.Parse(HttpContext.User.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Sid).Value);
+        IEnumerable<GroupDto> groups = await _groupService.GetAllByAccount(accountId, CancellationToken);
         return Ok(groups);
     }
-
-    [HttpPut("rename-group")]
-    public async Task<ActionResult<GroupDto>> RenameGroup([FromQuery] int id, string newName)
-    {
-        GroupDto groupDto = await _groupService.RenameGroup(id, newName, CancellationToken);
-        return Ok(groupDto);
-    }
-
 }

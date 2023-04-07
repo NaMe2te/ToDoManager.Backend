@@ -5,6 +5,7 @@ namespace ToDoManager.Application.Services;
 public interface ITaskService
 {
     Task AddTask(int accountId, string name, string text, CancellationToken cancellationToken, DateTime? deadline = null, int? groupId = null);
+    Task<IEnumerable<TaskDto>> GetTasksWithoutGroupByAccount(int id, CancellationToken cancellationToken);
     Task<TaskDto> RemoveTask(int taskId, CancellationToken cancellationToken);
     Task<IEnumerable<TaskDto>> GetTasksByGroup(int groupId, CancellationToken cancellationToken);
     Task<TaskDto> RenameTask(int id, string newName, CancellationToken cancellationToken);

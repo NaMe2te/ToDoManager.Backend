@@ -6,5 +6,5 @@ namespace ToDoManager.Application.Mapping;
 public static class GroupMapping
 {
     public static GroupDto AdDto(this Group group)
-        => new GroupDto(group.Id, group.Name, group.Tasks.Select(task => task.AdDto()));
+        => new GroupDto(group.Id, group.Name);
 }

@@ -20,7 +20,13 @@ public class TaskService : ITaskService
         var task = new DataAccess.Models.Task(default, name, text, accountId, deadline, groupId);
         await _taskRepository.CreateAsync(task, cancellationToken);
     }
-    
+
+    public async Task<IEnumerable<TaskDto>> GetTasksWithoutGroupByAccount(int id, CancellationToken cancellationToken)
+    {
+        var tasks = await _taskRepository.GetTasksWithoutGroupByAccount(id, cancellationToken);
+        return tasks.Select(task => task.AdDto());
+    }
+
     public async Task<TaskDto> RemoveTask(int taskId, CancellationToken cancellationToken)
     {
         var removedTask = await _taskRepository.GetModelAsync(taskId, cancellationToken);

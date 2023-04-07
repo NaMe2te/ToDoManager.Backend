@@ -17,9 +17,9 @@ public static class ServiceCollectionExtensions
                 {
                     ValidIssuer = configuration.GetSection("jwt").GetValue<string>("Issuer"),
                     ValidateIssuer = true,
-                    ValidAudience = "audience_to_do",
+                    ValidAudience = configuration.GetSection("jwt").GetValue<string>("Audience"),
                     ValidateAudience = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("jwt").GetValue<string>("SecretKey")))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.Unicode.GetBytes(configuration.GetSection("jwt").GetValue<string>("SecretKey")))
                 };
             });
                 
