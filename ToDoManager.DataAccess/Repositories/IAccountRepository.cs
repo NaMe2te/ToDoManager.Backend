@@ -5,5 +5,5 @@ namespace ToDoManager.DataAccess.Repositories;
 
 public interface IAccountRepository : IRepository<Account>
 {
-    Task<Account?> FindAccountByUsername(string username, CancellationToken cancellationToken);
+    Task<Account?> FindAccountByUsername(string username);
 }

@@ -8,7 +8,6 @@ using ToDoManager.Application.Exceptions.AlreadyExist;
 using ToDoManager.Application.Exceptions.InvalidDataException;
 using ToDoManager.Application.Services;
 using ToDoManager.UI.Models.Accounts;
-using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 namespace ToDoManager.UI.Controllers;
 
@@ -47,7 +46,7 @@ public class AccountController : Controller
     {
         try
         {
-            AccountDto accountDto = await _accountService.Login(accountModel.Username, accountModel.Password, CancellationToken);
+            AccountDto accountDto = await _accountService.Login(accountModel.Username, accountModel.Password);
             string t = GetToken(accountDto.Id, accountDto.Username);
             return Ok(new {token = t});
         }

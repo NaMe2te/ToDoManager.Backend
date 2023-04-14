@@ -113,7 +113,7 @@ public class GroupRepository : IGroupRepository
         {
             var groups = new List<Group>();
             await connection.OpenAsync(cancellationToken);
-            string getQuery = $"select * from {connection.Database}.groups where id = {accountId};";
+            string getQuery = $"select * from {connection.Database}.groups where account_id = {accountId};";
             await using (var command = new MySqlCommand(getQuery, connection))
             {
                 await using (var reader = command.ExecuteReader())

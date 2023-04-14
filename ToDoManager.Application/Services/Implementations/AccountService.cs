@@ -19,15 +19,15 @@ public class AccountService : IAccountService
 
     public async Task Register(string username, string password, CancellationToken cancellationToken)
     {
-        if (await _repository.FindAccountByUsername(username, cancellationToken) is not null)
+        if (await _repository.FindAccountByUsername(username) is not null)
             throw new UsernameAlreadyExistException(username);
         var account = new Account(default, username, password);
         await _repository.CreateAsync(account, cancellationToken);
     }
 
-    public async Task<AccountDto> Login(string username, string password, CancellationToken cancellationToken)
+    public async Task<AccountDto> Login(string username, string password)
     {
-        Account? account = await _repository.FindAccountByUsername(username, cancellationToken);
+        Account? account = await _repository.FindAccountByUsername(username);
         if (account is null || account.Password != password)
             throw new InvalidUsernameOrPasswordException();
 

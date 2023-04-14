@@ -9,12 +9,10 @@ namespace ToDoManager.Application.Services.Implementations;
 public class GroupService : IGroupService
 {
     private readonly IGroupRepository _groupRepository;
-    private readonly ITaskRepository _taskRepository;
 
-    public GroupService(IGroupRepository groupRepository, ITaskRepository taskRepository)
+    public GroupService(IGroupRepository groupRepository)
     {
         _groupRepository = groupRepository;
-        _taskRepository = taskRepository;
     }
 
     public async Task AddGroup(int accountId, string groupName, CancellationToken cancellationToken)
@@ -31,12 +29,6 @@ public class GroupService : IGroupService
 
     public async Task RemoveGroup(int id, CancellationToken cancellationToken)
     {
-        var tasksIdByGroup = (await _taskRepository.GetTasksByGroup(id, cancellationToken)).Select(task => task.Id).ToList();
-        foreach (var taskId in tasksIdByGroup)
-        {
-            await _taskRepository.DeleteAsync(taskId, cancellationToken);
-        }
-        
         await _groupRepository.DeleteAsync(id, cancellationToken);
     }
 

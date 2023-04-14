@@ -14,16 +14,15 @@ public class TaskService : ITaskService
         _taskRepository = taskRepository;
     }
 
-    public async Task AddTask(int accountId, string name, string text, CancellationToken cancellationToken, DateTime? deadline = null, int? groupId = null)
+    public async Task CreateTask(int accountId, string name, string text, CancellationToken cancellationToken, DateTime? deadline = null, int? groupId = null)
     {
-        
         var task = new DataAccess.Models.Task(default, name, text, accountId, deadline, groupId);
         await _taskRepository.CreateAsync(task, cancellationToken);
     }
 
-    public async Task<IEnumerable<TaskDto>> GetTasksWithoutGroupByAccount(int id, CancellationToken cancellationToken)
+    public async Task<IEnumerable<TaskDto>> GetTasksWithoutGroupByAccount(int accountId, CancellationToken cancellationToken)
     {
-        var tasks = await _taskRepository.GetTasksWithoutGroupByAccount(id, cancellationToken);
+        var tasks = await _taskRepository.GetTasksWithoutGroupByAccount(accountId, cancellationToken);
         return tasks.Select(task => task.AdDto());
     }
 
@@ -64,10 +63,10 @@ public class TaskService : ITaskService
         return task.AdDto();
     }
 
-    public async Task<TaskDto> CanceledTask(int taskId, CancellationToken cancellationToken)
+    public async Task<TaskDto> ChangeStatus(int taskId, bool status, CancellationToken cancellationToken)
     {
         var task = await _taskRepository.GetModelAsync(taskId, cancellationToken);
-        task.Complete();
+        task.ChangeStatus(status);
         await _taskRepository.UpdateAsync(task, cancellationToken);
         return task.AdDto();
     }

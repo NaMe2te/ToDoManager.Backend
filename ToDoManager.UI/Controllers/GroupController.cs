@@ -22,18 +22,32 @@ public class GroupController : Controller
     
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
     
-    [HttpPost("create-group")]
+    [HttpPost("create")]
     public async Task<ActionResult> CreateGroup([FromBody] CreateGroupModel model)
     {
-        int accountId = Int32.Parse(HttpContext.User.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Sid).Value);
+        int accountId = Int32.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.Sid).Value);
         await _groupService.AddGroup(accountId, model.GroupName, CancellationToken);
         return Ok();
     }
 
-    [HttpGet("get-all-groups")]
+    [HttpDelete("remove")]
+    public async Task<ActionResult> RemoveGroup([FromQuery] int id)
+    {
+        await _groupService.RemoveGroup(id, CancellationToken);
+        return Ok();
+    }
+
+    [HttpPut("rename")]
+    public async Task<ActionResult<GroupDto>> RenameGroup([FromBody] RenameGroupModel model)
+    {
+        GroupDto groupDto = await _groupService.RenameGroup(model.Id, model.NewName, CancellationToken);
+        return Ok(groupDto);
+    }
+
+    [HttpGet("get-all")]
     public async Task<ActionResult<IEnumerable<GroupDto>>> GetAllGroupsByAccount()
     {
-        int accountId = Int32.Parse(HttpContext.User.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Sid).Value);
+        int accountId = Int32.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.Sid).Value);
         IEnumerable<GroupDto> groups = await _groupService.GetAllByAccount(accountId, CancellationToken);
         return Ok(groups);
     }

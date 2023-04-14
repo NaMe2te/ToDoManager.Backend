@@ -44,5 +44,5 @@ public class Task
         GroupId = groupId;
     }
 
-    public void Complete() => IsCompleted = true;
+    public void ChangeStatus(bool status) => IsCompleted = status;
 }

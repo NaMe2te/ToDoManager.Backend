@@ -100,12 +100,12 @@ public class AccountRepository : IAccountRepository
         }
     }
 
-    public async Task<Account?> FindAccountByUsername(string username, CancellationToken cancellationToken)
+    public async Task<Account?> FindAccountByUsername(string username)
     { 
         await using (var connection = new MySqlConnection(_connectionString))
         {
             Account? account = null;
-            await connection.OpenAsync(cancellationToken);
+            connection.Open();
             var getQuery = $"select * from {connection.Database}.accounts where username = '{username}';";
             await using (var command = new MySqlCommand(getQuery, connection))
             {

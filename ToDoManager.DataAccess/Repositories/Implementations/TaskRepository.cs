@@ -34,7 +34,7 @@ public class TaskRepository : ITaskRepository
             string deadline = model.Deadline is not null ? $"'{model.Deadline.Value.ToString("yyyy-MM-dd HH:mm:ss")}'" : "NULL";
             var groupId = model.GroupId is not null ? $"{model.GroupId}" : "NULL";
             var updateQuery = $"update {connection.Database}.tasks"
-                              + $" set name = '{model.Name}', text = '{model.Text}', is_competed = {model.IsCompleted}, deadline = {deadline}, group_id = {groupId}"
+                              + $" set name = '{model.Name}', text = '{model.Text}', is_completed = {model.IsCompleted}, deadline = {deadline}, group_id = {groupId}"
                               + $" where id = {model.Id};";
             await using (var command = new MySqlCommand(updateQuery, connection))
                 await command.ExecuteNonQueryAsync(cancellationToken);
@@ -117,7 +117,7 @@ public class TaskRepository : ITaskRepository
         {
             await connection.OpenAsync(cancellationToken);
             var tasks = new List<Models.Task>();
-            var getQuery = $"select * from {connection.Database}.tasks where account_id = {accountId} and group_id = NULL";
+            var getQuery = $"select * from {connection.Database}.tasks where account_id = {accountId} and group_id is NULL and is_completed = 0";
             await using (var command = new MySqlCommand(getQuery, connection))
             {
                 await using (var reader = command.ExecuteReader())
@@ -144,7 +144,7 @@ public class TaskRepository : ITaskRepository
         {
             await connection.OpenAsync(cancellationToken);
             var tasks = new List<Models.Task>();
-            var getQuery = $"select * from {connection.Database}.tasks where group_id = {groupId}";
+            var getQuery = $"select * from {connection.Database}.tasks where group_id = {groupId} and is_completed = 0";
             await using (var command = new MySqlCommand(getQuery, connection))
             {
                 await using (var reader = command.ExecuteReader())
