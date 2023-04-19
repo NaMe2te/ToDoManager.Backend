@@ -1,8 +1,6 @@
-﻿using System.Configuration;
-using System.Text;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
 
 namespace ToDoManager.UI.Extensions;
 
@@ -15,11 +13,11 @@ public static class ServiceCollectionExtensions
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = configuration.GetSection("jwt").GetValue<string>("Issuer"),
+                    ValidIssuer = configuration["jwt:Issuer"],
                     ValidateIssuer = true,
-                    ValidAudience = configuration.GetSection("jwt").GetValue<string>("Audience"),
+                    ValidAudience = configuration["jwt:Audience"],
                     ValidateAudience = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.Unicode.GetBytes(configuration.GetSection("jwt").GetValue<string>("SecretKey")))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.Unicode.GetBytes(configuration["jwt:SecretKey"]))
                 };
             });
                 

@@ -7,11 +7,11 @@ namespace ToDoManager.DataAccess.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDataAccess(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static IServiceCollection AddDataAccess(this IServiceCollection serviceCollection, string connectionString)
     {
-        serviceCollection.AddScoped<ITaskRepository, TaskRepository>(provider => new TaskRepository(configuration.GetConnectionString("ToDoConnectionString")));
-        serviceCollection.AddScoped<IGroupRepository, GroupRepository>(provider => new GroupRepository(configuration.GetConnectionString("ToDoConnectionString")));
-        serviceCollection.AddScoped<IAccountRepository, AccountRepository>(provider => new AccountRepository(configuration.GetConnectionString("ToDoConnectionString")));
+        serviceCollection.AddScoped<ITaskRepository, TaskRepository>(provider => new TaskRepository(connectionString));
+        serviceCollection.AddScoped<IGroupRepository, GroupRepository>(provider => new GroupRepository(connectionString));
+        serviceCollection.AddScoped<IAccountRepository, AccountRepository>(provider => new AccountRepository(connectionString));
 
         return serviceCollection;
     }

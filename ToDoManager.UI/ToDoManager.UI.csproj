@@ -7,22 +7,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ToDoManager.Application\ToDoManager.Application.csproj" />
+        <ProjectReference Include="..\ToDoManager.Application\ToDoManager.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Views\Group.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Task.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Group\Index.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
+        <_ContentIncludedByDefault Remove="Views\Group.cshtml" />
+        <_ContentIncludedByDefault Remove="Views\Task.cshtml" />
+        <_ContentIncludedByDefault Remove="Views\Group\Index.cshtml" />
+        <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
-      <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-preview.3.23174.8" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
     </ItemGroup>
 
 </Project>

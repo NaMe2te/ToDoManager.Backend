@@ -59,7 +59,7 @@ public class AccountController : Controller
     private string GetToken(int accountId, string username)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.Unicode.GetBytes(_configuration.GetSection("jwt").GetValue<string>("SecretKey"));
+        var key = Encoding.Unicode.GetBytes(_configuration["jwt:SecretKey"]);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new Claim[]
@@ -68,8 +68,8 @@ public class AccountController : Controller
                 new (ClaimTypes.Name, username)
             }),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-            Audience = _configuration.GetSection("jwt").GetValue<string>("Audience"),
-            Issuer = _configuration.GetSection("jwt").GetValue<string>("Issuer")
+            Audience = _configuration["jwt:Audience"],
+            Issuer = _configuration["jwt:Issuer"]
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
 

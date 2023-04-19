@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 var configuration = builder.Configuration;
+var connectionString = configuration["ConnectionStrings:ToDoConnectionString"];
 
 builder.Services.AddSingleton(configuration);
 
@@ -14,7 +15,7 @@ builder.Services.AddCorsPolicy();
 
 builder.Services
     .AddApplication()
-    .AddDataAccess(configuration);
+    .AddDataAccess(connectionString);
 
 builder.Services.AddJwtAuthentication(configuration);
 
