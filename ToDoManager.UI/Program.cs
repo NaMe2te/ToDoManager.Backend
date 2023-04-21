@@ -8,8 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 var connectionString = configuration["ConnectionStrings:ToDoConnectionString"];
 
-builder.Services.AddSingleton(configuration);
-
 builder.Services.AddControllers();
 builder.Services.AddCorsPolicy();
 
@@ -32,7 +30,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
 app.UseCors();
 
 app.UseAuthentication();
